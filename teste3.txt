@@ -1,0 +1,35 @@
+START
+*{ teste3.txt -- mistura complexa: expressoes aninhadas, todos os tipos }*
+*{ Secao 1: aritmetica inteira }*
+(5 N)
+(1 I)
+(0 SOMA)
+*{ Loop de acumulacao }*
+WHILE (I N <=) DO
+(SOMA I +)
+END WHILE
+*{ Secao 2: potencia e historico RES }*
+(2 BASE)
+(8 EXP)
+(BASE EXP ^)
+(1 RES)
+*{ Secao 3: IF aninhado }*
+IF (SOMA N >) THEN
+IF (N 3 >) THEN
+(1 FLAG)
+ELSE
+(0 FLAG)
+END IF
+ELSE
+(0 FLAG)
+END IF
+*{ Secao 4: aritmetica real }*
+(1.5 X)
+(2.5 Y)
+(X Y +)
+(X Y *)
+*{ Secao 5: operadores logicos com comparacoes }*
+((1 2 <) (3 4 <) AND)
+((1 2 =) (3 3 =) OR)
+(2 RES)
+END

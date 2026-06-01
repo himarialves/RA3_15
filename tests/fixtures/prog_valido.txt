@@ -1,0 +1,25 @@
+START
+*{ Programa valido: demonstra todos os operadores e estruturas }*
+(10 A)
+(3 B)
+(A B +)
+(A B -)
+(A B *)
+(10 3 |)
+(10 3 %)
+(2 3 ^)
+(3.0 2.0 *)
+(3.0 2.0 /)
+(1 RES)
+(A B <)
+IF (A B >) THEN
+(100 C)
+ELSE
+(0 C)
+END IF
+(0 I)
+WHILE (I 3 <) DO
+(1 D)
+END WHILE
+((A B =) (B B =) OR)
+END
