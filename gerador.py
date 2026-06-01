@@ -6,24 +6,23 @@
 # Professor Frank Coelho de Alcantara
 # Projeto acadêmico para a disciplina Linguagens Formais e Compiladores (2026-1).
 # Instituição: Pontifícia Universidade Católica do Paraná - PUC/PR — 2026-1
+
 '''
- gerador.py — Módulo 4: gerarArvoreAtribuida + gerarAssembly
+gerador.py — Módulo 4: gerarArvoreAtribuida + gerarAssembly
 
-Estratégia F64 unificada:
-   - Todos os valores (int e real) vivem em registradores D (VFP double 64 bits).
-   - Inteiros são promovidos: MOV/LDR R0 → VMOV S0 → VCVT.F64.S32 D0, S0.
-   - Floats vêm de labels .double em .data: LDR R6, =label; VLDR D0, [R6].
+ Estratégia F64 unificada:
+   -Todos os valores (int e real) vivem em registradores D (VFP double 64 bits).
+   -Inteiros são promovidos: MOV/LDR R0 → VMOV S0 → VCVT.F64.S32 D0, S0.
+   -Floats vêm de labels .double em .data: LDR R6, =label; VLDR D0, [R6].
+   -Resultado de toda expressão fica em D0; pilha (VPUSH/VPOP) para sub-exprs.
 
-Decisões de design:
-   - F64 unificado — em vez de separar registradores S (float) e D (double),
-   usamos D para tudo. 
-   - VPUSH/VPOP para sub-expressões — a convenção é: operando esquerdo vai para
-   D1 (via VPUSH + VPOP), operando direito fica em D0. Resultado sempre em D0.
-   - Labels com contador global — _label_count é resetado a cada gerarAssembly().
-   - RES_HIST como array F64 — (N RES) indexa esse array pelo offset calculado
-   como (RES_IDX - N) × 8. Cada entrada é 8 bytes (F64), então LSL #3 é o shift.
+ Decisões:
+   -F64 unificado — em vez de separar registradores S (float) e D (double),
+   -VPUSH/VPOP para sub-expressões — a convenção é: operando esquerdo vai para
+   -D1 (via VPUSH + VPOP), operando direito fica em D0. 
+   -Labels com contador global 
+   -RES_HIST como array F64 — (N RES) 
 '''
-
 from __future__ import annotations
 from CONTRACTS import (
     No, NoAtribuido, TabelaSimbolos,
@@ -31,8 +30,8 @@ from CONTRACTS import (
     OPS_RELACIONAIS, OPS_LOGICOS,
 )
 
-# Estado global (resetado a cada chamada de gerarAssembly)
-
+##
+#  Estado global (resetado a cada chamada de gerarAssembly) 
 _label_count = 0
 
 def _novo_label(prefixo: str = "L") -> str:
@@ -44,7 +43,8 @@ def _label_para_float(val: str) -> str:
     # Labels ARM não aceitam '.' ou '-' — convertemos para '_' e 'N'
     return f"FC_{val.replace('.', '_').replace('-', 'N')}"
 
-# #
+
+##
 # PARTE A — gerarArvoreAtribuida
 def gerarArvoreAtribuida(
     arvore: No,
@@ -52,7 +52,8 @@ def gerarArvoreAtribuida(
     tipos: dict[int, str],
 ) -> NoAtribuido:
     # Anota cada nó com tipo_semantico, categoria_semantica, reg_resultado e label.
-    # Recebe a árvore sintática, a tabela de símbolos e o mapa id(no)→tipo do verificador de tipos. 
+    # Recebe a árvore sintática, a tabela de símbolos e o mapa id(no)→tipo do
+    # verificador de tipos. Retorna a árvore completa como NoAtribuido.
     return _anotar(arvore, tabela, tipos)
 
 def _categoria(no: No) -> str:
@@ -75,7 +76,8 @@ def _categoria(no: No) -> str:
     return "controle_fluxo"
 
 def _tipo_fallback(no: No, tabela: TabelaSimbolos) -> str:
-    # Usado quando o Módulo 3 não conseguiu inferir o tipo 
+    # Usado quando o Módulo 3 não conseguiu inferir o tipo (ex: variável com
+    # tipo "desconhecido"). Evita que gerarArvoreAtribuida quebre com None.
     tipo = no["tipo"]
     if tipo == "literal_int":
         return "int"
@@ -102,8 +104,7 @@ def _anotar(no: No, tabela: TabelaSimbolos, tipos: dict[int, str]) -> NoAtribuid
 
 ##
 # PARTE B — gerarAssembly
-# 
-# Pré-passos (coleta de declarações para .data) 
+#  Pré-passos (coleta de declarações para .data) 
 def _coletar_mem_ids(no: NoAtribuido, vistos: set[str]) -> None:
     if no["tipo"] in ("variavel", "atribuicao"):
         nome = no["valor"]
@@ -112,6 +113,7 @@ def _coletar_mem_ids(no: NoAtribuido, vistos: set[str]) -> None:
     for filho in no["filhos"]:
         _coletar_mem_ids(filho, vistos)
 
+
 def _coletar_floats(no: NoAtribuido, floats: dict[str, str]) -> None:
     if no["tipo"] == "literal_real":
         val = no["valor"]
@@ -119,7 +121,9 @@ def _coletar_floats(no: NoAtribuido, floats: dict[str, str]) -> None:
     for filho in no["filhos"]:
         _coletar_floats(filho, floats)
 
+
 #  Geração de literais / variáveis em D0 
+
 def _gerar_literal_int(no: NoAtribuido) -> str:
     val = no["valor"]
     ival = int(val)
@@ -132,10 +136,12 @@ def _gerar_literal_int(no: NoAtribuido) -> str:
         f"    VCVT.F64.S32 D0, S0"
     )
 
+
 def _gerar_literal_real(no: NoAtribuido) -> str:
     val = no["valor"]
     label = _label_para_float(val)
     return f"    @ real {val}\n    LDR R6, ={label}\n    VLDR D0, [R6]"
+
 
 def _gerar_literal_bool(no: NoAtribuido) -> str:
     val = no["valor"]
@@ -143,9 +149,11 @@ def _gerar_literal_bool(no: NoAtribuido) -> str:
     const = "CONST_ONE" if val == "TRUE" else "CONST_ZERO"
     return f"    @ bool {val}\n    LDR R6, ={const}\n    VLDR D0, [R6]"
 
+
 def _gerar_variavel_leitura(no: NoAtribuido) -> str:
     nome = no["valor"]
     return f"    @ var {nome}\n    LDR R1, ={nome}\n    VLDR D0, [R1]"
+
 
 def _gerar_n_res(no: NoAtribuido) -> str:
     # Acessa RES_HIST[RES_IDX - N].
@@ -162,6 +170,7 @@ def _gerar_n_res(no: NoAtribuido) -> str:
         "    ADD R6, R4, R2, LSL #3",
         "    VLDR D0, [R6]",
     ])
+
 
 def _gerar_valor_em_d0(no: NoAtribuido) -> str:
     # Despacha para a função de geração correta segundo o tipo de nó.
@@ -184,6 +193,7 @@ def _gerar_valor_em_d0(no: NoAtribuido) -> str:
     if tipo == "atribuicao":
         return _gerar_atribuicao(no, salvar_res=False)
     return f"    @ valor desconhecido: {tipo}"
+
 
 def _gerar_bloco_inline(no: NoAtribuido) -> str:
     # Bloco inline (valor=="") usado como valor de atribuição composta.
@@ -213,8 +223,9 @@ def _gerar_bloco_inline(no: NoAtribuido) -> str:
         return "\n".join(linhas)
     return _gerar_valor_em_d0(filhos[-1])
 
-##
-# Histórico de resultados 
+
+#  Histórico de resultados 
+
 def _gerar_salvar_res() -> str:
     # Salva D0 (F64) na posição RES_HIST[RES_IDX] e incrementa RES_IDX.
     # Chamado após qualquer statement de topo que produz resultado (expressão,
@@ -230,8 +241,9 @@ def _gerar_salvar_res() -> str:
         "    STR R2, [R3]",
     ])
 
-##
-# Geração de operadores 
+
+#  Geração de operadores 
+
 def _gerar_op(op: str) -> str:
     # Gera código ARM para operador binário.
     # Convenção de entrada: D1=operando esquerdo, D0=operando direito.
@@ -374,9 +386,10 @@ def _gerar_op(op: str) -> str:
 
     return f"    @ operador desconhecido: {op}"
 
+
 def _gerar_op_not() -> str:
     # NOT unário: inverte o valor booleano em D0.
-    # D0==0.0 (false) -> D0=1.0 (true); qualquer outro valor -> D0=0.0 (false).
+    # D0==0.0 (false) → D0=1.0 (true); qualquer outro valor → D0=0.0 (false).
     lt = _novo_label("NOT_T")
     le = _novo_label("NOT_E")
     return "\n".join([
@@ -393,8 +406,9 @@ def _gerar_op_not() -> str:
         f"{le}:",
     ])
 
-##
+
 #  Expressão RPN 
+
 def _gerar_expressao_rpn(no: NoAtribuido, salvar_res: bool) -> str:
     op = no["valor"]
     filhos = no["filhos"]
@@ -422,8 +436,9 @@ def _gerar_expressao_rpn(no: NoAtribuido, salvar_res: bool) -> str:
 
     return "\n".join(linhas)
 
-##
+
 #  Atribuição (V MEM) 
+
 def _gerar_atribuicao(no: NoAtribuido, salvar_res: bool) -> str:
     nome = no["valor"]
     valor_no = no["filhos"][0]
@@ -435,8 +450,9 @@ def _gerar_atribuicao(no: NoAtribuido, salvar_res: bool) -> str:
         linhas.append(_gerar_salvar_res())
     return "\n".join(linhas)
 
-##
+
 #  IF 
+
 def _gerar_if(no: NoAtribuido) -> str:
     filhos = no["filhos"]
     cond, bloco_then, bloco_else = filhos[0], filhos[1], filhos[2]
@@ -463,8 +479,9 @@ def _gerar_if(no: NoAtribuido) -> str:
     linhas.append(f"{label_fim}:")
     return "\n".join(linhas)
 
-##
+
 #  WHILE 
+
 def _gerar_while(no: NoAtribuido) -> str:
     filhos = no["filhos"]
     cond, bloco_corpo = filhos[0], filhos[1]
@@ -482,8 +499,9 @@ def _gerar_while(no: NoAtribuido) -> str:
     linhas.append(f"{lf}:")
     return "\n".join(linhas)
 
-##
+
 #  Statement (despacho) 
+
 def _stmt_produz_resultado(no: NoAtribuido) -> bool:
     # True se o statement deve ser salvo em RES_HIST — a mesma lógica do
     # verificador de tipos ao decidir o que entra em `resultados`.
@@ -512,6 +530,7 @@ def _gerar_stmt(no: NoAtribuido, salvar_res: bool) -> str:
         return _gerar_while(no)
     return f"    @ stmt desconhecido: {tipo}"
 
+
 def _gerar_bloco_stmts(nos: list) -> str:
     # Gera statements de um bloco interno (corpo de IF/WHILE) sem salvar em
     # RES_HIST — (N RES) dentro de IF/WHILE não acessa resultados de fora.
@@ -519,14 +538,16 @@ def _gerar_bloco_stmts(nos: list) -> str:
         return "    @ bloco vazio"
     return "\n".join(_gerar_stmt(no, salvar_res=False) for no in nos)
 
-##
+
 #  Seção .data 
+
 def _gerar_secao_dados(mem_ids: list[str], floats: dict[str, str]) -> str:
     linhas = [
         ".data",
         "",
         "@ Historico de resultados (max 256 entradas x 8 bytes = F64)",
         "RES_IDX: .word 0",
+        ".align 3              @ alinha a 8 bytes para VLDR/VSTR D (F64 exige alinhamento duplo)",
         "RES_HIST: .space 2048",
         "",
         "@ Constantes auxiliares para loops e operadores relacionais",
@@ -552,8 +573,9 @@ def _gerar_secao_dados(mem_ids: list[str], floats: dict[str, str]) -> str:
     ]
     return "\n".join(linhas)
 
-##
+
 #  Seção .text 
+
 def _gerar_secao_texto(arvore: NoAtribuido) -> str:
     linhas = [
         ".text",
@@ -566,9 +588,9 @@ def _gerar_secao_texto(arvore: NoAtribuido) -> str:
         "    @ Inicializa stack pointer (CPulator nao inicializa SP automaticamente)",
         "    LDR SP, =STACK_TOP",
         "",
-        "    @ Habilita coprocessador VFP (bit EN do FPEXC)",
+        "    @ Habilita coprocessador VFP (bit EN do FPEXC) — VMSR é a sintaxe UAL correta para ARMv7",
         "    LDR R0, =0x40000000",
-        "    FMXR FPEXC, R0",
+        "    VMSR FPEXC, R0",
         "",
         "    @ Inicializa indice do historico RES em zero",
         "    LDR R4, =RES_IDX",
@@ -586,8 +608,9 @@ def _gerar_secao_texto(arvore: NoAtribuido) -> str:
     ]
     return "\n".join(linhas)
 
-##
-# API pública 
+
+#  API pública 
+
 def gerarAssembly(arvore_atrib: NoAtribuido) -> str:
     # Gera código Assembly ARMv7 a partir da árvore atribuída.
     # Deve ser chamado apenas para programas sem erros semânticos.

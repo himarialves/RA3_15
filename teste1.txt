@@ -1,18 +1,26 @@
 START
-*{ teste2.txt -- programa com erros semanticos intencionais }*
-*{ Erro 1: int + real (tipo_incompativel) }*
-(3 3.14 +)
-*{ Erro 2: divisao real com int (tipo_incompativel) }*
-(3 2.0 /)
-*{ Erro 3: divisao inteira com real (tipo_incompativel) }*
-(3.0 2.0 |)
-*{ Erro 4: condicao de IF nao e bool }*
-IF (3 4 +) THEN
-(1 X)
+*{ teste1.txt -- programa valido com todas as operacoes e estruturas }*
+(10 A)
+(3 B)
+(A B +)
+(A B -)
+(A B *)
+(10 3 |)
+(10 3 %)
+(2 3 ^)
+(3.0 2.0 *)
+(3.0 2.0 /)
+(1 RES)
+(A B <)
+IF (A B >) THEN
+(100 C)
+ELSE
+(0 C)
 END IF
-*{ Erro 5: variavel nao declarada }*
-(Z 1 +)
-*{ Erro 6: redefinicao com tipo incompativel }*
-(3 X)
-(3.14 X)
+(0 I)
+WHILE (I 3 <) DO
+(1 D)
+((I 1 +) I)
+END WHILE
+((A B =) (B B =) OR)
 END

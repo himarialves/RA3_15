@@ -38,7 +38,7 @@ def validar(caminho: str) -> list[str]:
     linhas = texto.splitlines()
     erros: list[str] = []
 
-    #  Seções 
+    # ── Seções ────────────────────────────────────────────────────────────────
     tem_data = any(l.strip() == ".data" for l in linhas)
     tem_text = any(l.strip() == ".text" for l in linhas)
 
@@ -104,8 +104,8 @@ def validar(caminho: str) -> list[str]:
         erros.append("STACK_TOP não definido em .data.")
     if "LDR SP, =STACK_TOP" not in texto:
         erros.append("SP não inicializado (falta: LDR SP, =STACK_TOP).")
-    if "FMXR FPEXC" not in texto:
-        erros.append("VFP não habilitado (falta: FMXR FPEXC, R0).")
+    if "VMSR FPEXC" not in texto:
+        erros.append("VFP não habilitado (falta: VMSR FPEXC, R0).")
     if "_start:" not in texto:
         erros.append("Label _start: ausente.")
     if "_end:" not in texto:

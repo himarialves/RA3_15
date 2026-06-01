@@ -8,7 +8,7 @@
 # Instituição: Pontifícia Universidade Católica do Paraná - PUC/PR — 2026-1
 
 '''
-test_04_assembly.py — Testes do gerador de Assembly (Módulo 4).
+test_03_gerador.py — Testes do gerador de Assembly (Módulo 4).
 
 Valida o texto do Assembly gerado *sem* abrir o CPulator.
 Estratégia F64 unificada: todos os valores em registradores D (VFP double 64 bits).
@@ -33,8 +33,8 @@ from tabela_simbolos import construirTabelaSimbolos
 from verificar_tipos import verificarTipos
 from gerador import gerarArvoreAtribuida, gerarAssembly
 
-
-# Helper
+##
+#  Helper 
 def _pipeline(codigo: str) -> dict:
     # Executa o pipeline completo e retorna dict com erros e assembly.
     # assembly é None quando há erros semânticos — isso é testado explicitamente
@@ -69,7 +69,6 @@ def _asm(codigo: str) -> str:
 # Todo Assembly gerado deve ter essas seções e inicializações.
 # O CPulator não inicializa SP nem VFP automaticamente — sem esses blocos
 # qualquer instrução de pilha ou ponto flutuante causaria crash.
-
 def test_assembly_tem_secao_data():
     a = _asm("START\n(3 4 +)\nEND\n")
     assert ".data" in a
@@ -95,8 +94,9 @@ def test_inicializa_stack_pointer():
     assert "LDR SP, =STACK_TOP" in a
 
 def test_habilita_vfp():
+    # VMSR é a sintaxe UAL correta para ARMv7 — FMXR é pré-UAL e causa exceção no CPulator
     a = _asm("START\n(3 4 +)\nEND\n")
-    assert "FMXR FPEXC" in a
+    assert "VMSR FPEXC" in a
 
 def test_inicializa_res_idx():
     a = _asm("START\n(3 4 +)\nEND\n")
@@ -113,14 +113,11 @@ def test_const_zero_e_const_one_em_data():
     assert "CONST_ZERO: .double 0.0" in a
     assert "CONST_ONE:  .double 1.0" in a
 
-
-##
+## 
 # Operadores aritméticos (estratégia F64 unificada)
 # + → VADD.F64, - → VSUB.F64, * → VMUL.F64 (instruções VFP nativas).
 # / | % ^ → loops de subtração/multiplicação (VDIV não suportado no CPulator).
-# VPUSH/VPOP são usados para preservar o operando esquerdo enquanto o direito
-# é calculado — convenção: esquerdo em D1, direito em D0 ao chegar em _gerar_op.
-
+# VPUSH/VPOP
 def test_soma_int_gera_vadd_f64():
     a = _asm("START\n(3 4 +)\nEND\n")
     assert "VADD.F64" in a
@@ -176,7 +173,6 @@ def test_operacao_usa_vpush_vpop_para_pilha():
 # Relacionais comparam D1 (esq) e D0 (dir) via VCMP.F64.
 # VMRS copia as flags VFP para APSR para que as instruções B* possam lê-las.
 # Resultado: D0 = CONST_ONE (true) ou CONST_ZERO (false) via VLDR.
-
 def test_menor_gera_vcmp_e_blt():
     a = _asm("START\n(1 2 <)\nEND\n")
     assert "VCMP.F64 D1, D0" in a
@@ -225,7 +221,6 @@ def test_not_usa_beq():
 # Cada variável vira uma entrada .double 0.0 em .data — inicializada em zero
 # e sobrescrita pela primeira atribuição (V MEM).
 # Leitura (MEM) usa VLDR; escrita (V MEM) usa VSTR.
-
 def test_variavel_declarada_em_data_como_double():
     a = _asm("START\n(3 X)\nEND\n")
     assert "X: .double 0.0" in a
@@ -259,7 +254,6 @@ def test_variaveis_ordenadas_alfabeticamente_em_data():
 # Inteiros pequenos (0–255) usam MOV imediato; maiores usam LDR pseudo-instrução.
 # Todo inteiro passa por VMOV S0 + VCVT.F64.S32 para chegar em D0 como F64.
 # Floats geram labels FC_* em .data e são carregados com VLDR.
-
 def test_literal_int_pequeno_usa_mov():
     # Inteiros 0–255 usam MOV R0, #n (instrução mais curta, sem acesso a .data)
     a = _asm("START\n(7 X)\nEND\n")
@@ -362,7 +356,7 @@ def test_if_aninhado_labels_unicos():
 
 ##
 # WHILE — estrutura de repetição
-# Loop: avalia condição -> BEQ sai se false -> executa corpo -> B volta ao início.
+# Loop: avalia condição → BEQ sai se false → executa corpo → B volta ao início.
 # Dois WHILEs independentes devem ter labels distintos.
 def test_while_tem_label_loop_e_saida():
     codigo = "START\n(0 C)\nWHILE (C 10 <) DO\n(1 C)\nEND WHILE\nEND\n"
@@ -403,6 +397,7 @@ def test_dois_whiles_labels_unicos():
 
 ##
 # Aninhamento e expressões compostas
+##
 def test_expressao_aninhada_gera_todas_operacoes():
     # ((3 4 +) (2 5 *) -) deve gerar VADD, VMUL e VSUB
     a = _asm("START\n((3 4 +) (2 5 *) -)\nEND\n")
@@ -418,6 +413,7 @@ def test_condicao_aninhada_em_if():
     )
     assert "AND" in a
     assert "VCMP.F64 D0, #0.0" in a
+
 
 ##
 # Ausência de assembly com erros semânticos
@@ -441,7 +437,6 @@ def test_condicao_nao_bool_nao_gera_assembly():
 # gerarAssembly() reseta _label_count em cada chamada.
 # Sem isso, testes que dependem de IFs geram labels com números crescentes
 # e quebram quando rodados em sequência diferente.
-
 def test_labels_resetam_entre_compilacoes():
     # Dois IFs compilados separadamente devem começar com IF_FIM_1
     a1 = _asm("START\nIF (1 1 =) THEN\n(1 X)\nEND IF\nEND\n")
@@ -452,8 +447,10 @@ def test_labels_resetam_entre_compilacoes():
     assert label1.group(1) == label2.group(1), \
         "Contador deve reiniciar a cada gerarAssembly()"
 
+
 ##
 # Programa completo com todos os recursos
+##
 def test_programa_completo_sem_erros():
     # Programa usando todos os operadores e estruturas deve compilar sem erros
     codigo = (

@@ -6,7 +6,8 @@ START
 (0 SOMA)
 *{ Loop de acumulacao }*
 WHILE (I N <=) DO
-(SOMA I +)
+((SOMA I +) SOMA)
+((I 1 +) I)
 END WHILE
 *{ Secao 2: potencia e historico RES }*
 (2 BASE)
