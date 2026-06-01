@@ -1,0 +1,10 @@
+{
+  "X": {
+    "tipo": "int",
+    "linha_decl": 11,
+    "linhas_uso": [
+      16
+    ],
+    "escopo": "<programa>"
+  }
+}

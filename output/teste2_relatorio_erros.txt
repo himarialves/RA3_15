@@ -1,0 +1,9 @@
+7 erro(s) semântico(s) encontrado(s):
+
+  [variavel_nao_declarada] Linha 14: variável 'Z' usada antes de ser declarada
+  [tipo_incompativel] Linha 17: variável 'X' redefinida com tipo 'real', mas foi declarada como 'int'
+  [tipo_incompativel] Linha 4: operação '+' entre 'int' e 'real' não é permitida
+  [tipo_incompativel] Linha 6: operação '/' entre 'int' e 'real' não é permitida
+  [tipo_incompativel] Linha 8: operação '|' entre 'real' e 'real' não é permitida
+  [condicao_nao_bool] Linha 10: condição do IF deve ser bool, encontrado 'int'
+  [tipo_incompativel] Linha 17: variável 'X' tem tipo 'int' mas recebe valor do tipo 'real'

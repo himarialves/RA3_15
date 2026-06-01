@@ -1,0 +1,76 @@
+{
+  "N": {
+    "tipo": "int",
+    "linha_decl": 3,
+    "linhas_uso": [
+      6,
+      14,
+      15
+    ],
+    "escopo": "<programa>"
+  },
+  "I": {
+    "tipo": "int",
+    "linha_decl": 4,
+    "linhas_uso": [
+      6,
+      7,
+      8,
+      8
+    ],
+    "escopo": "<programa>"
+  },
+  "SOMA": {
+    "tipo": "int",
+    "linha_decl": 5,
+    "linhas_uso": [
+      7,
+      7,
+      14
+    ],
+    "escopo": "<programa>"
+  },
+  "BASE": {
+    "tipo": "int",
+    "linha_decl": 10,
+    "linhas_uso": [
+      12
+    ],
+    "escopo": "<programa>"
+  },
+  "EXP": {
+    "tipo": "int",
+    "linha_decl": 11,
+    "linhas_uso": [
+      12
+    ],
+    "escopo": "<programa>"
+  },
+  "FLAG": {
+    "tipo": "int",
+    "linha_decl": 16,
+    "linhas_uso": [
+      18,
+      21
+    ],
+    "escopo": "<programa>"
+  },
+  "X": {
+    "tipo": "real",
+    "linha_decl": 23,
+    "linhas_uso": [
+      25,
+      26
+    ],
+    "escopo": "<programa>"
+  },
+  "Y": {
+    "tipo": "real",
+    "linha_decl": 24,
+    "linhas_uso": [
+      25,
+      26
+    ],
+    "escopo": "<programa>"
+  }
+}

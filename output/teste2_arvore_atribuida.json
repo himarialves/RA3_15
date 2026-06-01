@@ -1,0 +1,261 @@
+{
+  "tipo": "programa",
+  "valor": "",
+  "linha": 1,
+  "tipo_semantico": "int",
+  "categoria_semantica": "controle_fluxo",
+  "reg_resultado": "D0",
+  "label": "",
+  "filhos": [
+    {
+      "tipo": "expressao_rpn",
+      "valor": "+",
+      "linha": 4,
+      "tipo_semantico": "int",
+      "categoria_semantica": "operacao_aritmetica",
+      "reg_resultado": "D0",
+      "label": "",
+      "filhos": [
+        {
+          "tipo": "literal_int",
+          "valor": "3",
+          "linha": 4,
+          "tipo_semantico": "int",
+          "categoria_semantica": "literal",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        },
+        {
+          "tipo": "literal_real",
+          "valor": "3.14",
+          "linha": 4,
+          "tipo_semantico": "real",
+          "categoria_semantica": "literal",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        }
+      ]
+    },
+    {
+      "tipo": "expressao_rpn",
+      "valor": "/",
+      "linha": 6,
+      "tipo_semantico": "int",
+      "categoria_semantica": "operacao_aritmetica",
+      "reg_resultado": "D0",
+      "label": "",
+      "filhos": [
+        {
+          "tipo": "literal_int",
+          "valor": "3",
+          "linha": 6,
+          "tipo_semantico": "int",
+          "categoria_semantica": "literal",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        },
+        {
+          "tipo": "literal_real",
+          "valor": "2.0",
+          "linha": 6,
+          "tipo_semantico": "real",
+          "categoria_semantica": "literal",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        }
+      ]
+    },
+    {
+      "tipo": "expressao_rpn",
+      "valor": "|",
+      "linha": 8,
+      "tipo_semantico": "int",
+      "categoria_semantica": "operacao_aritmetica",
+      "reg_resultado": "D0",
+      "label": "",
+      "filhos": [
+        {
+          "tipo": "literal_real",
+          "valor": "3.0",
+          "linha": 8,
+          "tipo_semantico": "real",
+          "categoria_semantica": "literal",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        },
+        {
+          "tipo": "literal_real",
+          "valor": "2.0",
+          "linha": 8,
+          "tipo_semantico": "real",
+          "categoria_semantica": "literal",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        }
+      ]
+    },
+    {
+      "tipo": "if",
+      "valor": "",
+      "linha": 10,
+      "tipo_semantico": "int",
+      "categoria_semantica": "controle_fluxo",
+      "reg_resultado": "D0",
+      "label": "",
+      "filhos": [
+        {
+          "tipo": "expressao_rpn",
+          "valor": "+",
+          "linha": 10,
+          "tipo_semantico": "int",
+          "categoria_semantica": "operacao_aritmetica",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": [
+            {
+              "tipo": "literal_int",
+              "valor": "3",
+              "linha": 10,
+              "tipo_semantico": "int",
+              "categoria_semantica": "literal",
+              "reg_resultado": "D0",
+              "label": "",
+              "filhos": []
+            },
+            {
+              "tipo": "literal_int",
+              "valor": "4",
+              "linha": 10,
+              "tipo_semantico": "int",
+              "categoria_semantica": "literal",
+              "reg_resultado": "D0",
+              "label": "",
+              "filhos": []
+            }
+          ]
+        },
+        {
+          "tipo": "bloco",
+          "valor": "then",
+          "linha": 10,
+          "tipo_semantico": "int",
+          "categoria_semantica": "controle_fluxo",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": [
+            {
+              "tipo": "atribuicao",
+              "valor": "X",
+              "linha": 11,
+              "tipo_semantico": "int",
+              "categoria_semantica": "variavel_escrita",
+              "reg_resultado": "D0",
+              "label": "",
+              "filhos": [
+                {
+                  "tipo": "literal_int",
+                  "valor": "1",
+                  "linha": 11,
+                  "tipo_semantico": "int",
+                  "categoria_semantica": "literal",
+                  "reg_resultado": "D0",
+                  "label": "",
+                  "filhos": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tipo": "bloco",
+          "valor": "else",
+          "linha": 10,
+          "tipo_semantico": "int",
+          "categoria_semantica": "controle_fluxo",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        }
+      ]
+    },
+    {
+      "tipo": "expressao_rpn",
+      "valor": "+",
+      "linha": 14,
+      "tipo_semantico": "int",
+      "categoria_semantica": "operacao_aritmetica",
+      "reg_resultado": "D0",
+      "label": "",
+      "filhos": [
+        {
+          "tipo": "variavel",
+          "valor": "Z",
+          "linha": 14,
+          "tipo_semantico": "int",
+          "categoria_semantica": "variavel_leitura",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        },
+        {
+          "tipo": "literal_int",
+          "valor": "1",
+          "linha": 14,
+          "tipo_semantico": "int",
+          "categoria_semantica": "literal",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        }
+      ]
+    },
+    {
+      "tipo": "atribuicao",
+      "valor": "X",
+      "linha": 16,
+      "tipo_semantico": "int",
+      "categoria_semantica": "variavel_escrita",
+      "reg_resultado": "D0",
+      "label": "",
+      "filhos": [
+        {
+          "tipo": "literal_int",
+          "valor": "3",
+          "linha": 16,
+          "tipo_semantico": "int",
+          "categoria_semantica": "literal",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        }
+      ]
+    },
+    {
+      "tipo": "atribuicao",
+      "valor": "X",
+      "linha": 17,
+      "tipo_semantico": "real",
+      "categoria_semantica": "variavel_escrita",
+      "reg_resultado": "D0",
+      "label": "",
+      "filhos": [
+        {
+          "tipo": "literal_real",
+          "valor": "3.14",
+          "linha": 17,
+          "tipo_semantico": "real",
+          "categoria_semantica": "literal",
+          "reg_resultado": "D0",
+          "label": "",
+          "filhos": []
+        }
+      ]
+    }
+  ]
+}
