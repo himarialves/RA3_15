@@ -20,6 +20,7 @@ END IF
 (0 I)
 WHILE (I 3 <) DO
 (1 D)
+((I 1 +) I)
 END WHILE
 ((A B =) (B B =) OR)
 END

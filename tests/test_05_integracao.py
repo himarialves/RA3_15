@@ -14,7 +14,6 @@
  verificando: código de saída, artefatos gerados, relatório de erros.
 
 '''
-
 from __future__ import annotations
 import os
 import re
@@ -41,14 +40,17 @@ def _rodar(arquivo: str) -> tuple[int, str, str]:
     )
     return res.returncode, res.stdout, res.stderr
 
+
 def _nome_base(arquivo: str) -> str:
     return os.path.splitext(os.path.basename(arquivo))[0]
+
 
 ##
 # Programa válido
 # Usa tests/fixtures/prog_valido.txt — programa sem erros semânticos.
 # Verifica: exit 0, assembly gerado, todos os artefatos em output/ criados.
 class TestProgramaValido:
+
     @pytest.fixture(autouse=True)
     def _setup(self):
         self.arquivo = os.path.join(FIXTURES, "prog_valido.txt")
