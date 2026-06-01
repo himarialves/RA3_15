@@ -1,0 +1,54 @@
+{
+  "A": {
+    "tipo": "int",
+    "linha_decl": 3,
+    "linhas_uso": [
+      5,
+      6,
+      7,
+      14,
+      15,
+      25
+    ],
+    "escopo": "<programa>"
+  },
+  "B": {
+    "tipo": "int",
+    "linha_decl": 4,
+    "linhas_uso": [
+      5,
+      6,
+      7,
+      14,
+      15,
+      25,
+      25,
+      25
+    ],
+    "escopo": "<programa>"
+  },
+  "C": {
+    "tipo": "int",
+    "linha_decl": 16,
+    "linhas_uso": [
+      18
+    ],
+    "escopo": "<programa>"
+  },
+  "I": {
+    "tipo": "int",
+    "linha_decl": 20,
+    "linhas_uso": [
+      21,
+      23,
+      23
+    ],
+    "escopo": "<programa>"
+  },
+  "D": {
+    "tipo": "int",
+    "linha_decl": 22,
+    "linhas_uso": [],
+    "escopo": "<programa>"
+  }
+}
